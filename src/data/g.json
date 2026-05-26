@@ -1,0 +1,23 @@
+    [
+  {
+    "id": "chatgpt-plus",
+    "name": "ChatGPT Plus",
+    "tagline": "GPT-4o access, no limits",
+    "description": "Full ChatGPT Plus subscription with GPT-4o, image generation, and plugins.",
+    "price": 15,
+    "currency": "USD",
+    "duration": "1 Month",
+    "stock": true,
+    "warranty": "30 days replacement",
+    "image": "https://res.cloudinary.com/dq0mlhw2c/image/upload/v1779705761/image-27-1024x569_gom56k.png",
+    "features": [
+      "GPT-4o access",
+      "DALL·E image generation",
+      "Advanced data analysis",
+      "Priority response speed"
+    ],
+    "whatsapp": "923001234567",
+    "telegram": "ztoolsofficial",
+    "whatsapp_message": "Hi, I want to buy ChatGPT Plus ($15/month)"
+  }
+]
