@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { uploadToCloudinary } from '../utils/temp3'
-import { storage } from '../utils/temp2'
-import { getProducts, addProduct, updateProduct, deleteProduct } from '../services/temp1'
+import { uploadToCloudinary } from '../utils/uploadtocloudinary'
+import { storage } from '../utils/proofstorage'
+import { getProducts, addProduct, updateProduct, deleteProduct } from '../services/productservice'
 
 const TABS = ['🖼️ Logo & Proofs', '📦 Products']
 const PROOF_SECTIONS = [

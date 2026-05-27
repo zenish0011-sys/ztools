@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import emailjs from '@emailjs/browser'
 import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY, PAYMENT_METHODS } from '../constants/consts'
-import { uploadToCloudinary } from '../utils/temp3'
+import { uploadToCloudinary } from '../utils/uploadtocloudinary'
 
 export default function PaymentProof() {
   const location = useLocation()
