@@ -16,7 +16,7 @@ export default function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/payment-proof" element={<PaymentProof />} />
         <Route path="/proofs/:type" element={<Proofs />} />
-<Route path="/zt-admin-x9k2" element={<AdminUpload />} />
+<Route path="/zt-admin-x9k234hj23hsf24hff12fhs9120ca123rc/12d/ddasas/asdafuooiut124f" element={<AdminUpload />} />
         <Route path="/about" element={<About />} />
         
       </Routes>
