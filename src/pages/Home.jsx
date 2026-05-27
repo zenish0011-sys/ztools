@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getProducts } from '../services/productservice'
+import { getProducts } from '../services/temp1'
 import ProductCard from '../components/ProductCard'
 
 function SkeletonCard() {
