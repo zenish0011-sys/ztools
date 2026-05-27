@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { getProducts } from '../services/productService'
+import { getProducts } from '../services/productservice'
 import { WHATSAPP_NUMBER, TELEGRAM_USERNAME } from '../constants/consts'
 import PurchaseModal from './PurchaseDirect'
 

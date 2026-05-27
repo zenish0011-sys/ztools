@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { REDDIT_VOUCH_POST } from '../constants/consts'
-import { storage } from '../utils/proofStorage'
+import { storage } from '../utils/proofstorage'
 
 const SECTION_META = {
   whatsapp: { label: '💬 WhatsApp Proofs', description: 'Customers who bought via WhatsApp.', accent: '#22c55e' },
