@@ -9,7 +9,7 @@ const PROOF_SECTIONS = [
   { key: 'telegram', label: '✈️ Telegram', folder: 'ztools/proofs/telegram' },
   { key: 'reddit',   label: '🟠 Reddit',   folder: 'ztools/proofs/reddit'   },
 ]
-const EMPTY = { name:'', tagline:'', description:'', price:'', currency:'USD', duration:'1 Month', customDuration:'', stock:true, isBundle:false, isPinned:false, warranty:'30 days replacement', whatsapp_message:'', image:'', features:[''] }
+const EMPTY = { name:'', tagline:'', description:'', price:'', currency:'USD', duration:'1 Month', customDuration:'', stock:true, isBundle:false, isPinned:false, warranty:'30 days replacement', whatsapp_message:'', telegram_message:'', image:'', features:[''] }
 
 export default function AdminUpload() {
   const [tab, setTab] = useState(0)
@@ -24,14 +24,63 @@ export default function AdminUpload() {
   const [saving, setSaving] = useState(false)
   const [imgUploading, setImgUploading] = useState(false)
 
-  useEffect(() => { setLogo(storage.get('logo')); setProofs({ whatsapp:storage.get('whatsapp'), telegram:storage.get('telegram'), reddit:storage.get('reddit') }); loadProducts() }, [])
+  const refreshMedia = async () => {
+    const [lg, wa, tg, rd] = await Promise.all([
+      storage.get('logo'),
+      storage.get('whatsapp'),
+      storage.get('telegram'),
+      storage.get('reddit')
+    ])
+    setLogo(lg)
+    setProofs({ whatsapp: wa, telegram: tg, reddit: rd })
+  }
+
+  useEffect(() => {
+    refreshMedia()
+    loadProducts()
+  }, [])
 
   const loadProducts = () => { setProdLoading(true); getProducts().then(setProducts).finally(() => setProdLoading(false)) }
-  const refreshMedia = () => { setLogo(storage.get('logo')); setProofs({ whatsapp:storage.get('whatsapp'), telegram:storage.get('telegram'), reddit:storage.get('reddit') }) }
 
-  const handleLogoUpload = async (e) => { const file = e.target.files[0]; if (!file) return; setUploading('logo'); try { const url = await uploadToCloudinary(file, 'ztools/logo'); storage.add('logo', url); refreshMedia() } catch { alert('Upload failed') } finally { setUploading(''); e.target.value = '' } }
-  const handleProofUpload = async (e, key, folder) => { const file = e.target.files[0]; if (!file) return; setUploading(key); try { const url = await uploadToCloudinary(file, folder); storage.add(key, url); refreshMedia() } catch { alert('Upload failed') } finally { setUploading(''); e.target.value = '' } }
-  const deleteProof = (key, url) => { if (!confirm('Remove?')) return; storage.remove(key, url); refreshMedia() }
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploading('logo')
+    try {
+      const url = await uploadToCloudinary(file, 'ztools/logo')
+      await storage.add('logo', url)
+      await refreshMedia()
+    } catch {
+      alert('Upload failed')
+    } finally {
+      setUploading('')
+      e.target.value = ''
+    }
+  }
+
+  const handleProofUpload = async (e, key, folder) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+    setUploading(key)
+    try {
+      const urls = await Promise.all(files.map(file => uploadToCloudinary(file, folder)))
+      for (const url of urls) {
+        if (url) await storage.add(key, url)
+      }
+      await refreshMedia()
+    } catch {
+      alert('Upload failed')
+    } finally {
+      setUploading('')
+      e.target.value = ''
+    }
+  }
+
+  const deleteProof = async (key, url) => {
+    if (!confirm('Remove?')) return
+    await storage.remove(key, url)
+    await refreshMedia()
+  }
 
   const openAdd = () => { setForm(EMPTY); setEditId(null); setShowForm(true) }
   const openEdit = (p) => {
@@ -48,7 +97,8 @@ export default function AdminUpload() {
       isBundle: p.isBundle || false,
       isPinned: p.isPinned || false,
       warranty: p.warranty,
-      whatsapp_message: p.whatsapp_message,
+      whatsapp_message: p.whatsapp_message || '',
+      telegram_message: p.telegram_message || '',
       image: p.image,
       features: p.features?.length ? p.features : ['']
     });
@@ -133,7 +183,7 @@ export default function AdminUpload() {
                     <h3 className="font-medium text-[var(--color-text)]">{label}</h3>
                     <label className={`cursor-pointer ${btnSecondary} ${uploading === key ? 'opacity-50 pointer-events-none' : ''}`}>
                       {uploading === key ? 'Uploading...' : '+ Add Proof'}
-                      <input type="file" accept="image/*" className="hidden" onChange={e => handleProofUpload(e, key, folder)} disabled={uploading === key} />
+                      <input type="file" accept="image/*" multiple className="hidden" onChange={e => handleProofUpload(e, key, folder)} disabled={uploading === key} />
                     </label>
                   </div>
                   {proofs[key].length === 0 ? (
@@ -236,7 +286,17 @@ export default function AdminUpload() {
                 )}
 
                 <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Warranty</label><input value={form.warranty} onChange={e => setForm(f => ({ ...f, warranty: e.target.value }))} placeholder="e.g. 30 days replacement" className={inputClass} /></div>
-                <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">WhatsApp Pre-fill Message</label><input value={form.whatsapp_message} onChange={e => setForm(f => ({ ...f, whatsapp_message: e.target.value }))} placeholder="e.g. Hi, I want to buy ChatGPT Plus ($15/month)" className={inputClass} /></div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">WhatsApp Pre-fill Message</label>
+                    <input value={form.whatsapp_message || ''} onChange={e => setForm(f => ({ ...f, whatsapp_message: e.target.value }))} placeholder="e.g. Hi, I want to buy ChatGPT Plus ($15/month)" className={inputClass} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Telegram Pre-fill Message</label>
+                    <input value={form.telegram_message || ''} onChange={e => setForm(f => ({ ...f, telegram_message: e.target.value }))} placeholder="e.g. Hi, I want to buy ChatGPT Plus ($15/month)" className={inputClass} />
+                  </div>
+                </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 pt-1">
                   <div className="flex items-center gap-3">

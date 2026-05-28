@@ -13,10 +13,20 @@ export default function Proofs() {
   const { type } = useParams()
   const meta = SECTION_META[type]
   const [images, setImages] = useState([])
+  const [loading, setLoading] = useState(true)
   const [lightbox, setLightbox] = useState(null)
+  const [page, setPage] = useState(1)
+
+  const IMAGES_PER_PAGE = 12
 
   useEffect(() => {
-    if (type) setImages(storage.get(type))
+    if (type) {
+      setLoading(true)
+      setPage(1)
+      storage.get(type)
+        .then(res => setImages(res || []))
+        .finally(() => setLoading(false))
+    }
   }, [type])
 
   if (!meta) {
@@ -28,6 +38,9 @@ export default function Proofs() {
       </div>
     )
   }
+
+  const totalPages = Math.ceil(images.length / IMAGES_PER_PAGE)
+  const paginatedImages = images.slice((page - 1) * IMAGES_PER_PAGE, page * IMAGES_PER_PAGE)
 
   return (
     <>
@@ -46,24 +59,54 @@ export default function Proofs() {
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" /></svg>
         </a>
 
-        {images.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3 border border-[var(--color-border)] rounded-2xl bg-[var(--color-surface)]">
+            <div className="w-10 h-10 border-4 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-[var(--color-text-dim)] font-medium">Loading verified proofs...</p>
+          </div>
+        ) : images.length === 0 ? (
           <div className="text-center py-16 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
             <div className="text-4xl mb-3">📸</div>
             <p className="text-[var(--color-text-muted)]">Proofs coming soon!</p>
             <p className="text-sm text-[var(--color-text-dim)] mt-1">Check back later for verified purchase screenshots.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {images.map((url, i) => (
-              <button key={i} onClick={() => setLightbox(url)}
-                className="group relative rounded-xl overflow-hidden border border-[var(--color-border)] hover:border-[var(--color-accent)]/30 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent-glow)]">
-                <img src={url} alt={`proof-${i}`} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" /></svg>
-                </div>
-              </button>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {paginatedImages.map((url, i) => (
+                <button key={i} onClick={() => setLightbox(url)}
+                  className="group relative rounded-xl overflow-hidden border border-[var(--color-border)] hover:border-[var(--color-accent)]/30 transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-accent-glow)]">
+                  <img src={url} alt={`proof-${i}`} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" /></svg>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-3 mt-10 pt-6 border-t border-[var(--color-border)]/60">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage(p => p - 1)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:translate-y-[-1px] disabled:hover:translate-y-0 cursor-pointer"
+                >
+                  ← Previous
+                </button>
+                <span className="text-xs uppercase tracking-widest text-[var(--color-text-dim)] font-semibold font-[var(--font-mono)]">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(p => p + 1)}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:translate-y-[-1px] disabled:hover:translate-y-0 cursor-pointer"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

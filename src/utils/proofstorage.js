@@ -1,33 +1,51 @@
-const KEYS = {
-  logo:      'zt_logo',
-  whatsapp:  'zt_proofs_whatsapp',
-  telegram:  'zt_proofs_telegram',
-  reddit:    'zt_proofs_reddit',
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '../lib/firebase'
+
+const SETTINGS_DOC = doc(db, 'settings', 'global')
+
+const getGlobalSettings = async () => {
+  try {
+    const snap = await getDoc(SETTINGS_DOC)
+    if (snap.exists()) {
+      const data = snap.data()
+      return {
+        logo: data.logo || '',
+        whatsapp: data.whatsapp || [],
+        telegram: data.telegram || [],
+        reddit: data.reddit || [],
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching global settings:', err)
+  }
+  return { logo: '', whatsapp: [], telegram: [], reddit: [] }
 }
 
 export const storage = {
-  get: (key) => {
-    try {
-      const val = localStorage.getItem(KEYS[key])
-      return val ? JSON.parse(val) : (key === 'logo' ? '' : [])
-    } catch { return key === 'logo' ? '' : [] }
+  get: async (key) => {
+    const data = await getGlobalSettings()
+    return data[key]
   },
 
-  add: (key, url) => {
+  add: async (key, url) => {
+    const data = await getGlobalSettings()
     if (key === 'logo') {
-      localStorage.setItem(KEYS[key], JSON.stringify(url))
+      data.logo = url
     } else {
-      const current = storage.get(key)
-      localStorage.setItem(KEYS[key], JSON.stringify([...current, url]))
+      if (!data[key].includes(url)) {
+        data[key] = [...data[key], url]
+      }
     }
+    await setDoc(SETTINGS_DOC, data)
   },
 
-  remove: (key, url) => {
+  remove: async (key, url) => {
+    const data = await getGlobalSettings()
     if (key === 'logo') {
-      localStorage.removeItem(KEYS[key])
+      data.logo = ''
     } else {
-      const updated = storage.get(key).filter(u => u !== url)
-      localStorage.setItem(KEYS[key], JSON.stringify(updated))
+      data[key] = data[key].filter(u => u !== url)
     }
-  },
+    await setDoc(SETTINGS_DOC, data)
+  }
 }

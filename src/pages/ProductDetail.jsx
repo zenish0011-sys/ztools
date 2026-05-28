@@ -42,8 +42,10 @@ export default function ProductDetail() {
       </div>
     )
 
-  const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(product.whatsapp_message)}`
-  const tgLink = `https://t.me/${TELEGRAM_USERNAME}`
+  const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(product.whatsapp_message || '')}`
+  const tgLink = product.telegram_message
+    ? `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(product.telegram_message)}`
+    : `https://t.me/${TELEGRAM_USERNAME}`
 
   return (
     <>
