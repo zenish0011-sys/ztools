@@ -71,7 +71,18 @@ export default function ProductDetail() {
             >
               {product.name}
             </h1>
-            <p className="text-[var(--color-text-muted)] mt-2 leading-relaxed">{product.description}</p>
+            <div className="text-[var(--color-text)]/85 mt-3 text-sm sm:text-base leading-relaxed space-y-4 whitespace-pre-wrap">
+              {product.description?.split('\n\n').map((paragraph, index) => (
+                <p key={index}>
+                  {paragraph.split('\n').map((line, lineIndex) => (
+                    <span key={lineIndex}>
+                      {line}
+                      {lineIndex < paragraph.split('\n').length - 1 && <br />}
+                    </span>
+                  ))}
+                </p>
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -88,6 +99,16 @@ export default function ProductDetail() {
             >
               {product.stock ? '● In Stock' : '● Out of Stock'}
             </span>
+            {product.isBundle && (
+              <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[var(--color-orange-dim)] text-[var(--color-orange)] border border-[var(--color-orange)]/20">
+                📦 Bundle Package
+              </span>
+            )}
+            {product.isPinned && (
+              <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[var(--color-accent-subtle)] text-[var(--color-accent)] border border-[var(--color-accent)]/20">
+                📌 Pinned Featured
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">

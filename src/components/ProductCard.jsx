@@ -12,7 +12,7 @@ export default function ProductCard({ product, index = 0 }) {
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-44 object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-[185px] object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent opacity-60" />
 
@@ -24,12 +24,26 @@ export default function ProductCard({ product, index = 0 }) {
         }`}>
           {product.stock ? '● In Stock' : '● Out of Stock'}
         </span>
+
+        {/* Pinned badge */}
+        {product.isPinned && (
+          <span className="absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm bg-[var(--color-accent-subtle)] text-[var(--color-accent)] border border-[var(--color-accent)]/20 shadow-sm">
+            📌 Pinned
+          </span>
+        )}
+
+        {/* Bundle badge */}
+        {product.isBundle && (
+          <span className={`absolute ${product.isPinned ? 'top-11' : 'top-3'} left-3 text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm bg-[var(--color-orange-dim)] text-[var(--color-orange)] border border-[var(--color-orange)]/20`}>
+            📦 Bundle
+          </span>
+        )}
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-2.5">
+      <div className="p-5 space-y-3">
         <div>
-          <h2 className="font-[var(--font-heading)] text-base font-semibold text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors duration-200 line-clamp-1">
+          <h2 className="font-[var(--font-heading)] text-[17.5px] font-semibold text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors duration-200 line-clamp-1">
             {product.name}
           </h2>
           <p className="text-sm text-[var(--color-text-muted)] mt-0.5 line-clamp-1">
@@ -38,7 +52,7 @@ export default function ProductCard({ product, index = 0 }) {
         </div>
 
         <div className="flex items-center justify-between pt-1 border-t border-[var(--color-border)]">
-          <span className="font-[var(--font-mono)] text-sm font-semibold text-[var(--color-green)]">
+          <span className="font-[var(--font-mono)] text-base font-semibold text-[var(--color-green)]">
             ${product.price}
             <span className="text-[var(--color-text-dim)] font-normal text-xs ml-1">/ {product.duration}</span>
           </span>

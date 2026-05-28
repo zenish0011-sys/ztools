@@ -9,7 +9,7 @@ const PROOF_SECTIONS = [
   { key: 'telegram', label: '✈️ Telegram', folder: 'ztools/proofs/telegram' },
   { key: 'reddit',   label: '🟠 Reddit',   folder: 'ztools/proofs/reddit'   },
 ]
-const EMPTY = { name:'', tagline:'', description:'', price:'', currency:'USD', duration:'1 Month', stock:true, warranty:'30 days replacement', whatsapp_message:'', image:'', features:[''] }
+const EMPTY = { name:'', tagline:'', description:'', price:'', currency:'USD', duration:'1 Month', customDuration:'', stock:true, isBundle:false, isPinned:false, warranty:'30 days replacement', whatsapp_message:'', image:'', features:[''] }
 
 export default function AdminUpload() {
   const [tab, setTab] = useState(0)
@@ -34,7 +34,27 @@ export default function AdminUpload() {
   const deleteProof = (key, url) => { if (!confirm('Remove?')) return; storage.remove(key, url); refreshMedia() }
 
   const openAdd = () => { setForm(EMPTY); setEditId(null); setShowForm(true) }
-  const openEdit = (p) => { setForm({ name:p.name, tagline:p.tagline, description:p.description, price:p.price, currency:p.currency, duration:p.duration, stock:p.stock, warranty:p.warranty, whatsapp_message:p.whatsapp_message, image:p.image, features:p.features?.length ? p.features : [''] }); setEditId(p.id); setShowForm(true) }
+  const openEdit = (p) => {
+    const isPreset = ['1 Month', '3 Months', '6 Months', '1 Year', '18 Months', 'Lifetime'].includes(p.duration);
+    setForm({
+      name: p.name,
+      tagline: p.tagline,
+      description: p.description,
+      price: p.price,
+      currency: p.currency,
+      duration: isPreset ? p.duration : 'Custom',
+      customDuration: isPreset ? '' : p.duration,
+      stock: p.stock,
+      isBundle: p.isBundle || false,
+      isPinned: p.isPinned || false,
+      warranty: p.warranty,
+      whatsapp_message: p.whatsapp_message,
+      image: p.image,
+      features: p.features?.length ? p.features : ['']
+    });
+    setEditId(p.id);
+    setShowForm(true);
+  }
   const handleDelete = async (id) => { if (!confirm('Delete this product?')) return; await deleteProduct(id); loadProducts() }
   const handleImageUpload = async (e) => { const file = e.target.files[0]; if (!file) return; setImgUploading(true); try { const url = await uploadToCloudinary(file, 'ztools/products'); setForm(f => ({ ...f, image: url })) } catch { alert('Image upload failed') } finally { setImgUploading(false); e.target.value = '' } }
 
@@ -45,7 +65,16 @@ export default function AdminUpload() {
   const handleSave = async () => {
     if (!form.name || !form.price || !form.image) return alert('Name, price and image are required')
     setSaving(true)
-    const payload = { ...form, price: Number(form.price), features: form.features.filter(f => f.trim() !== '') }
+    const durationVal = form.duration === 'Custom' ? form.customDuration : form.duration
+    const payload = {
+      ...form,
+      price: Number(form.price),
+      duration: durationVal,
+      features: form.features.filter(f => f.trim() !== ''),
+      isBundle: !!form.isBundle,
+      isPinned: !!form.isPinned
+    }
+    delete payload.customDuration
     try { if (editId) await updateProduct(editId, payload); else await addProduct(payload); setShowForm(false); loadProducts() } catch { alert('Save failed') } finally { setSaving(false) }
   }
 
@@ -149,9 +178,21 @@ export default function AdminUpload() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-[var(--color-text)] truncate">{p.name}</p>
                     <p className="text-sm text-[var(--color-text-muted)] font-[var(--font-mono)]">${p.price} / {p.duration}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${p.stock ? 'bg-[var(--color-green-dim)] text-[var(--color-green)]' : 'bg-[var(--color-red-dim)] text-[var(--color-red)]'}`}>
-                      {p.stock ? 'In Stock' : 'Out of Stock'}
-                    </span>
+                    <div className="flex gap-1.5 mt-1">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${p.stock ? 'bg-[var(--color-green-dim)] text-[var(--color-green)]' : 'bg-[var(--color-red-dim)] text-[var(--color-red)]'}`}>
+                        {p.stock ? 'In Stock' : 'Out of Stock'}
+                      </span>
+                      {p.isBundle && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-orange-dim)] text-[var(--color-orange)]">
+                          Bundle
+                        </span>
+                      )}
+                      {p.isPinned && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-accent-subtle)] text-[var(--color-accent)] border border-[var(--color-accent)]/10 font-semibold">
+                          📌 Pinned
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     <button onClick={() => openEdit(p)} className={btnSecondary}>Edit</button>
@@ -184,19 +225,46 @@ export default function AdminUpload() {
                 <div className="grid grid-cols-3 gap-3">
                   <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Price *</label><input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="15" className={inputClass} /></div>
                   <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Currency</label><select value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))} className={inputClass}><option>USD</option><option>EUR</option><option>GBP</option></select></div>
-                  <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Duration</label><select value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} className={inputClass}><option>1 Month</option><option>3 Months</option><option>6 Months</option><option>1 Year</option><option>18 Months</option><option>Lifetime</option></select></div>
+                  <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Duration</label><select value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} className={inputClass}><option>1 Month</option><option>3 Months</option><option>6 Months</option><option>1 Year</option><option>18 Months</option><option>Lifetime</option><option>Custom</option></select></div>
                 </div>
+
+                {form.duration === 'Custom' && (
+                  <div className="animate-slide-down">
+                    <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Custom Duration</label>
+                    <input value={form.customDuration || ''} onChange={e => setForm(f => ({ ...f, customDuration: e.target.value }))} placeholder="e.g. 1 Year + 2 Months" className={inputClass} />
+                  </div>
+                )}
 
                 <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Warranty</label><input value={form.warranty} onChange={e => setForm(f => ({ ...f, warranty: e.target.value }))} placeholder="e.g. 30 days replacement" className={inputClass} /></div>
                 <div><label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">WhatsApp Pre-fill Message</label><input value={form.whatsapp_message} onChange={e => setForm(f => ({ ...f, whatsapp_message: e.target.value }))} placeholder="e.g. Hi, I want to buy ChatGPT Plus ($15/month)" className={inputClass} /></div>
 
-                <div className="flex items-center gap-3">
-                  <label className="text-sm font-medium text-[var(--color-text)]">In Stock</label>
-                  <button type="button" onClick={() => setForm(f => ({ ...f, stock: !f.stock }))}
-                    className={`w-11 h-6 rounded-full transition-colors ${form.stock ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border)]'}`}>
-                    <span className={`block w-4 h-4 bg-white rounded-full shadow transition-transform mx-1 ${form.stock ? 'translate-x-5' : 'translate-x-0'}`} />
-                  </button>
-                  <span className={`text-sm ${form.stock ? 'text-[var(--color-green)]' : 'text-[var(--color-text-dim)]'}`}>{form.stock ? 'In Stock' : 'Out of Stock'}</span>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 pt-1">
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-[var(--color-text)] min-w-[70px]">In Stock</label>
+                    <button type="button" onClick={() => setForm(f => ({ ...f, stock: !f.stock }))}
+                      className={`w-11 h-6 rounded-full transition-colors ${form.stock ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border)]'}`}>
+                      <span className={`block w-4 h-4 bg-white rounded-full shadow transition-transform mx-1 ${form.stock ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                    <span className={`text-sm ${form.stock ? 'text-[var(--color-green)]' : 'text-[var(--color-text-dim)]'}`}>{form.stock ? 'In Stock' : 'Out of Stock'}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-[var(--color-text)] min-w-[70px]">Bundle Pack</label>
+                    <button type="button" onClick={() => setForm(f => ({ ...f, isBundle: !f.isBundle }))}
+                      className={`w-11 h-6 rounded-full transition-colors ${form.isBundle ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border)]'}`}>
+                      <span className={`block w-4 h-4 bg-white rounded-full shadow transition-transform mx-1 ${form.isBundle ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                    <span className={`text-sm ${form.isBundle ? 'text-[var(--color-orange)]' : 'text-[var(--color-text-dim)]'}`}>{form.isBundle ? 'Bundle Product' : 'Single Product'}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-[var(--color-text)] min-w-[70px]">Pin to Top</label>
+                    <button type="button" onClick={() => setForm(f => ({ ...f, isPinned: !f.isPinned }))}
+                      className={`w-11 h-6 rounded-full transition-colors ${form.isPinned ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border)]'}`}>
+                      <span className={`block w-4 h-4 bg-white rounded-full shadow transition-transform mx-1 ${form.isPinned ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                    <span className={`text-sm ${form.isPinned ? 'text-[var(--color-accent)] font-semibold' : 'text-[var(--color-text-dim)]'}`}>{form.isPinned ? 'Pinned' : 'Normal'}</span>
+                  </div>
                 </div>
 
                 <div>
