@@ -10,6 +10,8 @@ import upiLogo from '../assets/paymentslogos/upi.webp'
 import wiseLogo from '../assets/paymentslogos/wise.png'
 import revolutLogo from '../assets/paymentslogos/revoult.png'
 import remitlyLogo from '../assets/paymentslogos/remitly.png'
+import whatsappLogo from '../assets/social/whatsapp.png'
+import telegramLogo from '../assets/social/telegram.png'
 
 export const PAYMENT_METHODS = [
   // ── PRIMARY (self-serve) ─────────────────────────────────────────────────
@@ -280,22 +282,24 @@ function ContactOnlyDetail({ method, waLink, tgLink }) {
         </p>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
         <a
           href={waLink}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all hover:brightness-110 hover:translate-y-[-1px] bg-[#22c55e] text-white cursor-pointer"
+          className="flex items-center justify-center gap-2.5 w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-600/20 hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] group cursor-pointer"
         >
-          💬 Contact on WhatsApp
+          <img src={whatsappLogo} alt="WhatsApp" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+          <span>Contact WhatsApp</span>
         </a>
         <a
           href={tgLink}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all hover:brightness-110 hover:translate-y-[-1px] bg-[#3b82f6] text-white cursor-pointer"
+          className="flex items-center justify-center gap-2.5 w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 bg-sky-600/10 border border-sky-500/20 text-sky-400 hover:bg-sky-600/20 hover:border-sky-500/50 hover:shadow-[0_0_15px_rgba(14,165,233,0.15)] group cursor-pointer"
         >
-          ✈️ Contact on Telegram
+          <img src={telegramLogo} alt="Telegram" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+          <span>Contact Telegram</span>
         </a>
       </div>
     </div>

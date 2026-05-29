@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getProducts } from '../services/productservice'
 import { WHATSAPP_NUMBER, TELEGRAM_USERNAME } from '../constants/consts'
 import PurchaseModal from './PurchaseDirect'
+import whatsappLogo from '../assets/social/whatsapp.png'
+import telegramLogo from '../assets/social/telegram.png'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -142,22 +144,26 @@ export default function ProductDetail() {
             <p className="text-xs text-[var(--color-text-dim)] text-center font-semibold uppercase tracking-widest">
               Quick — chat with us directly
             </p>
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-semibold text-sm transition-all hover:translate-y-[-1px] hover:shadow-lg bg-[#22c55e] text-white hover:bg-[#16a34a]"
-            >
-              💬 Buy via WhatsApp
-            </a>
-            <a
-              href={tgLink}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-semibold text-sm transition-all hover:translate-y-[-1px] hover:shadow-lg bg-[#3b82f6] text-white hover:bg-[#2563eb]"
-            >
-              ✈️ Buy via Telegram
-            </a>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-600/20 hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] group cursor-pointer"
+              >
+                <img src={whatsappLogo} alt="WhatsApp" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+                <span>Buy via WhatsApp</span>
+              </a>
+              <a
+                href={tgLink}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 bg-sky-600/10 border border-sky-500/20 text-sky-400 hover:bg-sky-600/20 hover:border-sky-500/50 hover:shadow-[0_0_15px_rgba(14,165,233,0.15)] group cursor-pointer"
+              >
+                <img src={telegramLogo} alt="Telegram" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+                <span>Buy via Telegram</span>
+              </a>
+            </div>
 
             <div className="flex items-center gap-3 py-1">
               <div className="flex-1 h-px bg-[var(--color-border)]" />

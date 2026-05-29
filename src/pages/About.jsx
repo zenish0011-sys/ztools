@@ -1,4 +1,6 @@
 import { WHATSAPP_NUMBER, TELEGRAM_USERNAME, PAYMENT_METHODS } from '../constants/consts'
+import whatsappLogo from '../assets/social/whatsapp.png'
+import telegramLogo from '../assets/social/telegram.png'
 
 export default function About() {
   const customMessage = encodeURIComponent('Hi, Ztools')
@@ -110,18 +112,20 @@ export default function About() {
               href={waLink}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:translate-y-[-1px] hover:shadow-lg bg-[#22c55e] text-white hover:bg-[#16a34a]"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-600/20 hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] group cursor-pointer"
             >
-              💬 WhatsApp
+              <img src={whatsappLogo} alt="WhatsApp" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+              <span>WhatsApp</span>
             </a>
 
             <a
               href={tgLink}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:translate-y-[-1px] hover:shadow-lg bg-[#3b82f6] text-white hover:bg-[#2563eb]"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 bg-sky-600/10 border border-sky-500/20 text-sky-400 hover:bg-sky-600/20 hover:border-sky-500/50 hover:shadow-[0_0_15px_rgba(14,165,233,0.15)] group cursor-pointer"
             >
-              ✈️ Telegram
+              <img src={telegramLogo} alt="Telegram" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+              <span>Telegram</span>
             </a>
           </div>
         </div>

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 import { getProducts } from '../services/productservice'
 import ProductCard from '../components/ProductCard'
+import { WHATSAPP_NUMBER, TELEGRAM_USERNAME } from '../constants/consts'
+import whatsappLogo from '../assets/social/whatsapp.png'
+import telegramLogo from '../assets/social/telegram.png'
+import redditLogo from '../assets/social/reddit.png'
 
 function SkeletonCard() {
   return (
@@ -38,6 +42,9 @@ export default function Home() {
     return pinB - pinA
   })
 
+  const waRedditLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi ZTools, I'm coming from Reddit! I'd like to buy some premium AI tools and get set up.")}`
+  const tgRedditLink = `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent("Hi ZTools, I'm coming from Reddit! I'd like to buy some premium AI tools and get set up.")}`
+
   return (
     <div className="min-h-screen">
       {/* Hero section */}
@@ -63,6 +70,54 @@ export default function Home() {
           <p className="text-sm text-[var(--color-text-dim)] animate-fade-in-up" style={{ animationDelay: '300ms' }}>
             Fast delivery • Warranty included • 24/7 support
           </p>
+        </div>
+      </div>
+
+      {/* Reddit Welcome Banner */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-8 animate-fade-in-up" style={{ animationDelay: '350ms' }}>
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--color-border)] bg-zinc-900/40 backdrop-blur-xl p-5 sm:p-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Subtle glowing backgrounds inside the banner */}
+          <div className="absolute -top-10 -right-10 w-[200px] h-[100px] bg-orange-500/10 rounded-full blur-[40px] pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-[150px] h-[80px] bg-indigo-500/10 rounded-full blur-[30px] pointer-events-none" />
+          
+          <div className="flex items-center gap-4.5 text-center md:text-left flex-col sm:flex-row relative z-10">
+            {/* Reddit icon/badge with orange glow */}
+            <div className="relative flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.15)]">
+              <img src={redditLogo} alt="Reddit" className="w-8 h-8 object-contain" />
+              {/* Pulsing online indicator */}
+              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-orange-500 border-2 border-zinc-950 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-zinc-100 flex items-center justify-center md:justify-start gap-2">
+                Buying from Reddit?
+              </h3>
+              <p className="text-sm text-zinc-400 mt-0.5">
+                Chat with us directly for instant setup!
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3.5 w-full md:w-auto justify-center relative z-10">
+            <a 
+              href={waRedditLink}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-white bg-emerald-600/10 border border-emerald-500/30 hover:bg-emerald-600/20 hover:border-emerald-500/60 transition-all duration-300 hover:-translate-y-0.5 shadow-[0_0_15px_rgba(16,185,129,0.05)] hover:shadow-[0_0_25px_rgba(16,185,129,0.15)] group cursor-pointer"
+            >
+              <img src={whatsappLogo} alt="WhatsApp" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+              <span>WhatsApp</span>
+            </a>
+
+            <a 
+              href={tgRedditLink}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-white bg-sky-600/10 border border-sky-500/30 hover:bg-sky-600/20 hover:border-sky-500/60 transition-all duration-300 hover:-translate-y-0.5 shadow-[0_0_15px_rgba(14,165,233,0.05)] hover:shadow-[0_0_25px_rgba(14,165,233,0.15)] group cursor-pointer"
+            >
+              <img src={telegramLogo} alt="Telegram" className="w-7 h-7 object-contain transition-transform group-hover:scale-105" />
+              <span>Telegram</span>
+            </a>
+          </div>
         </div>
       </div>
 
