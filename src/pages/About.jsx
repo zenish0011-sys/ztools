@@ -1,12 +1,21 @@
+import { useState, useEffect } from 'react'
 import { WHATSAPP_NUMBER, TELEGRAM_USERNAME, PAYMENT_METHODS } from '../constants/consts'
 import whatsappLogo from '../assets/social/whatsapp.png'
 import telegramLogo from '../assets/social/telegram.png'
+import { storage } from '../utils/proofstorage'
 
 export default function About() {
   const customMessage = encodeURIComponent('Hi, Ztools')
 
   const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${customMessage}`
   const tgLink = `https://t.me/${TELEGRAM_USERNAME}?text=${customMessage}`
+
+  const [salesCount, setSalesCount] = useState(1250)
+  useEffect(() => {
+    storage.get('salesCount').then(count => {
+      if (count !== undefined) setSalesCount(count)
+    })
+  }, [])
 
   return (
     <div className="min-h-screen">
@@ -30,8 +39,9 @@ export default function About() {
             className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-sm text-[var(--color-text-muted)] animate-fade-in-up"
             style={{ animationDelay: '150ms' }}
           >
-            ⭐ Trusted by <span className="font-semibold text-[var(--color-text)]">500+</span> customers and{' '}
-            <span className="font-semibold text-[var(--color-text)]">10+</span> resellers
+            ⭐ Trusted by <span className="font-semibold text-[var(--color-text)]">800+</span> customers and{' '}
+            <span className="font-semibold text-[var(--color-text)]">10+</span> resellers |{' '}
+            <span className="font-semibold text-[var(--color-green)]">{salesCount}+</span> successful sales
           </div>
         </div>
       </div>
@@ -49,19 +59,22 @@ export default function About() {
             ✨ Why ZTools?
           </h2>
 
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { icon: '⚡', title: 'Fast Delivery', desc: 'Get your credentials within hours' },
               { icon: '🛡️', title: 'Warranty', desc: 'Every purchase includes replacement warranty' },
+              { icon: '📸', title: 'Tons of Proofs', desc: 'Hundreds of verified client vouches & proofs' },
               { icon: '💰', title: 'Best Prices', desc: 'Up to 70% cheaper than official pricing' },
             ].map((item, i) => (
               <div
                 key={i}
-                className="text-center p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)]"
+                className="text-center p-4 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)] flex flex-col justify-between"
               >
-                <div className="text-2xl mb-2">{item.icon}</div>
-                <h3 className="font-semibold text-[var(--color-text)] text-sm mb-1">{item.title}</h3>
-                <p className="text-xs text-[var(--color-text-muted)]">{item.desc}</p>
+                <div>
+                  <div className="text-2xl mb-2">{item.icon}</div>
+                  <h3 className="font-semibold text-[var(--color-text)] text-sm mb-1">{item.title}</h3>
+                </div>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1">{item.desc}</p>
               </div>
             ))}
           </div>

@@ -44,9 +44,9 @@ export default function Navbar() {
     <nav
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[var(--color-bg)]/90 backdrop-blur-xl shadow-lg shadow-black/20'
-          : 'bg-[var(--color-bg)]/70 backdrop-blur-md'
-      } border-b border-[var(--color-border)]`}
+          ? 'bg-[#09090b]/55 backdrop-blur-lg border-b border-[var(--color-border)]/50 shadow-lg shadow-black/20'
+          : 'bg-[#09090b]/20 backdrop-blur-xs border-b border-transparent'
+      }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
@@ -77,6 +77,10 @@ export default function Navbar() {
                 onClick={() => setProofsOpen(!proofsOpen)}
                 className={`${navLinkClass} flex items-center gap-1.5`}
               >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
                 Proofs
                 <svg
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${proofsOpen ? 'rotate-180' : ''}`}
@@ -146,7 +150,13 @@ export default function Navbar() {
               About
             </Link>
             <div className="pt-1 pb-1">
-              <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--color-text-dim)]">Proofs</p>
+              <p className="px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--color-text-dim)] flex items-center gap-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                Proofs
+              </p>
               <Link to="/proofs/whatsapp" className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors">
                 <img src={whatsappLogo} alt="" className="w-4.5 h-4.5 object-contain" /> WhatsApp
               </Link>

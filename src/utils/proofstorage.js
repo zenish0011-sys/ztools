@@ -13,18 +13,25 @@ const getGlobalSettings = async () => {
         whatsapp: data.whatsapp || [],
         telegram: data.telegram || [],
         reddit: data.reddit || [],
+        salesCount: data.salesCount !== undefined ? data.salesCount : 1250,
       }
     }
   } catch (err) {
     console.error('Error fetching global settings:', err)
   }
-  return { logo: '', whatsapp: [], telegram: [], reddit: [] }
+  return { logo: '', whatsapp: [], telegram: [], reddit: [], salesCount: 1250 }
 }
 
 export const storage = {
   get: async (key) => {
     const data = await getGlobalSettings()
     return data[key]
+  },
+
+  set: async (key, val) => {
+    const data = await getGlobalSettings()
+    data[key] = val
+    await setDoc(SETTINGS_DOC, data)
   },
 
   add: async (key, url) => {

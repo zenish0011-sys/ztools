@@ -24,15 +24,57 @@ export default function AdminUpload() {
   const [saving, setSaving] = useState(false)
   const [imgUploading, setImgUploading] = useState(false)
 
+  // Auth States
+  const [isLogged, setIsLogged] = useState(() => {
+    return sessionStorage.getItem('admin_auth') === 'true'
+  })
+  const [usernameInput, setUsernameInput] = useState('')
+  const [passwordInput, setPasswordInput] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const inputClass = "w-full rounded-xl px-4 py-3 text-sm bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 focus:border-[var(--color-accent)]/50 transition-all"
+  const btnPrimary = "bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:translate-y-[-1px]"
+  const btnSecondary = "bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] text-[var(--color-text)] border border-[var(--color-border)] text-sm px-4 py-2 rounded-xl transition-all"
+
+  const handleLogin = (e) => {
+    e.preventDefault()
+    const expectedUser = import.meta.env.VITE_ADMIN_USERNAME || 'ztools'
+    const expectedPass = import.meta.env.VITE_ADMIN_PASSCODE || 'Bhushan_@77'
+    if (usernameInput === expectedUser && passwordInput === expectedPass) {
+      setIsLogged(true)
+      setErrorMsg('')
+      sessionStorage.setItem('admin_auth', 'true')
+    } else {
+      setErrorMsg('Invalid username or passcode')
+    }
+  }
+
+  const [salesCountInput, setSalesCountInput] = useState(1250)
+  const [savingSales, setSavingSales] = useState(false)
+
   const refreshMedia = async () => {
-    const [lg, wa, tg, rd] = await Promise.all([
+    const [lg, wa, tg, rd, sc] = await Promise.all([
       storage.get('logo'),
       storage.get('whatsapp'),
       storage.get('telegram'),
-      storage.get('reddit')
+      storage.get('reddit'),
+      storage.get('salesCount')
     ])
     setLogo(lg)
     setProofs({ whatsapp: wa, telegram: tg, reddit: rd })
+    if (sc !== undefined) setSalesCountInput(sc)
+  }
+
+  const handleSaveSalesCount = async () => {
+    setSavingSales(true)
+    try {
+      await storage.set('salesCount', Number(salesCountInput))
+      alert('Sales count updated successfully!')
+    } catch {
+      alert('Failed to update sales count')
+    } finally {
+      setSavingSales(false)
+    }
   }
 
   useEffect(() => {
@@ -128,9 +170,67 @@ export default function AdminUpload() {
     try { if (editId) await updateProduct(editId, payload); else await addProduct(payload); setShowForm(false); loadProducts() } catch { alert('Save failed') } finally { setSaving(false) }
   }
 
-  const inputClass = "w-full rounded-xl px-4 py-3 text-sm bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 focus:border-[var(--color-accent)]/50 transition-all"
-  const btnPrimary = "bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:translate-y-[-1px]"
-  const btnSecondary = "bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] text-[var(--color-text)] border border-[var(--color-border)] text-sm px-4 py-2 rounded-xl transition-all"
+  // Auth Gate
+  if (!isLogged) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md rounded-2xl border border-[var(--color-border)] bg-zinc-900/40 backdrop-blur-xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden animate-fade-in-up">
+          {/* Decorative glows */}
+          <div className="absolute -top-10 -right-10 w-[150px] h-[80px] bg-[var(--color-accent)]/10 rounded-full blur-[30px] pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-[150px] h-[80px] bg-red-500/10 rounded-full blur-[30px] pointer-events-none" />
+
+          <div className="text-center relative z-10">
+            <h2 className="text-2xl font-bold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-heading)' }}>
+              Admin Verification
+            </h2>
+            <p className="text-sm text-[var(--color-text-dim)] mt-1.5">
+              Enter your credentials to access the console
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4 relative z-10">
+            {errorMsg && (
+              <div className="text-xs font-semibold px-3 py-2 rounded-lg bg-[var(--color-red-dim)] text-[var(--color-red)] border border-[var(--color-red)]/20 animate-pulse">
+                ⚠️ {errorMsg}
+              </div>
+            )}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--color-text-dim)] mb-1.5">
+                Username
+              </label>
+              <input
+                type="text"
+                value={usernameInput}
+                onChange={e => setUsernameInput(e.target.value)}
+                placeholder="Username"
+                className={inputClass}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--color-text-dim)] mb-1.5">
+                Passcode
+              </label>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={e => setPasswordInput(e.target.value)}
+                placeholder="••••••••"
+                className={inputClass}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white shadow-[0_0_15px_rgba(16,185,129,0.1)] cursor-pointer`}
+            >
+              Verify & Enter
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 animate-fade-in-up">
@@ -153,6 +253,32 @@ export default function AdminUpload() {
       {/* TAB 0: LOGO & PROOFS */}
       {tab === 0 && (
         <div className="space-y-6">
+          {/* Live Sales Count */}
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-heading)' }}>📈 Live Sales Count</h2>
+                <p className="text-xs text-[var(--color-text-dim)]">Manually update the total sales count shown on the homepage and about page</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  value={salesCountInput}
+                  onChange={e => setSalesCountInput(Number(e.target.value))}
+                  className="w-24 sm:w-28 rounded-xl px-3.5 py-2 text-sm bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 transition-all font-semibold"
+                  placeholder="1250"
+                />
+                <button
+                  onClick={handleSaveSalesCount}
+                  className={btnPrimary}
+                  disabled={savingSales}
+                >
+                  {savingSales ? 'Saving...' : 'Save Count'}
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
             <div className="flex items-center justify-between mb-4">
               <div>

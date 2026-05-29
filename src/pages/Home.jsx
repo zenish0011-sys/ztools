@@ -5,6 +5,7 @@ import { WHATSAPP_NUMBER, TELEGRAM_USERNAME } from '../constants/consts'
 import whatsappLogo from '../assets/social/whatsapp.png'
 import telegramLogo from '../assets/social/telegram.png'
 import redditLogo from '../assets/social/reddit.png'
+import { storage } from '../utils/proofstorage'
 
 function SkeletonCard() {
   return (
@@ -25,11 +26,16 @@ export default function Home() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('single')
+  const [salesCount, setSalesCount] = useState(1250)
 
   useEffect(() => {
     getProducts()
       .then(setProducts)
       .finally(() => setLoading(false))
+
+    storage.get('salesCount').then(count => {
+      if (count !== undefined) setSalesCount(count)
+    })
   }, [])
 
   const filteredProducts = products.filter(p => 
@@ -56,8 +62,9 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-12 text-center relative">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[var(--color-accent)]/20 bg-[var(--color-accent-subtle)] mb-6 animate-fade-in-up">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-green)] animate-pulse" />
-            <span className="text-xs font-medium text-[var(--color-accent)]">Trusted by 500+ customers</span>
+            <span className="text-xs font-medium text-[var(--color-accent)]">
+              ⭐ Trusted by 800+ customers | <span className="text-[var(--color-green)] font-semibold">{salesCount}+</span> successful sales
+            </span>
           </div>
 
           {/* Heading */}
