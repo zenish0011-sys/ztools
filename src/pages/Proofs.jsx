@@ -1,15 +1,17 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { REDDIT_VOUCH_POST } from '../constants/consts'
+
 import { storage } from '../utils/proofstorage'
 import whatsappLogo from '../assets/social/whatsapp.png'
 import telegramLogo from '../assets/social/telegram.png'
 import redditLogo from '../assets/social/reddit.png'
 
+
 const SECTION_META = {
   whatsapp: { label: 'WhatsApp Proofs', description: 'Customers who bought via WhatsApp.', accent: '#22c55e', logo: whatsappLogo },
   telegram: { label: 'Telegram Proofs', description: 'Customers who bought via Telegram.', accent: '#3b82f6', logo: telegramLogo },
   reddit:   { label: 'Reddit Proofs',   description: 'Reddit DM proofs and vouches.', accent: '#f97316', logo: redditLogo },
+
 }
 
 export default function Proofs() {
@@ -59,12 +61,7 @@ export default function Proofs() {
         </h1>
         <p className="text-[var(--color-text-muted)] mb-6">{meta.description}</p>
 
-        <a href={REDDIT_VOUCH_POST} target="_blank" rel="noreferrer"
-          className="inline-flex items-center gap-2.5 mb-8 px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:translate-y-[-1px] bg-[var(--color-orange-dim)] border border-[var(--color-orange)]/20 text-[var(--color-orange)] hover:border-[var(--color-orange)]/40 group">
-          <img src={redditLogo} alt="Reddit" className="w-6 h-6 object-contain transition-transform group-hover:scale-105" />
-          <span>View our Reddit Vouch Post</span>
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" /></svg>
-        </a>
+
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3 border border-[var(--color-border)] rounded-2xl bg-[var(--color-surface)]">

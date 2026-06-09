@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { SITE_NAME, REDDIT_VOUCH_POST } from '../constants/consts'
+import { SITE_NAME } from '../constants/consts'
 import logo from '../assets/logo.png'
 import whatsappLogo from '../assets/social/whatsapp.png'
 import telegramLogo from '../assets/social/telegram.png'
@@ -105,15 +105,6 @@ export default function Navbar() {
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors">
                       <img src={redditLogo} alt="" className="w-4.5 h-4.5 object-contain" /> Reddit Proofs
                     </Link>
-                    <div className="mx-3 my-1.5 h-px bg-[var(--color-border)]" />
-                    <a href={REDDIT_VOUCH_POST} target="_blank" rel="noreferrer"
-                      onClick={() => setProofsOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[var(--color-orange)] hover:bg-[var(--color-orange-dim)] transition-colors">
-                      <img src={redditLogo} alt="" className="w-4.5 h-4.5 object-contain" /> Vouch Post
-                      <svg className="w-3 h-3 ml-auto opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </a>
                   </div>
                 </div>
               )}
@@ -167,13 +158,6 @@ export default function Navbar() {
                 <img src={redditLogo} alt="" className="w-4.5 h-4.5 object-contain" /> Reddit
               </Link>
             </div>
-            <a href={REDDIT_VOUCH_POST} target="_blank" rel="noreferrer"
-              className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-orange)] hover:bg-[var(--color-orange-dim)] transition-colors">
-              <img src={redditLogo} alt="" className="w-4.5 h-4.5 object-contain" /> Vouch Post
-              <svg className="w-3 h-3 opacity-50 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-              </svg>
-            </a>
           </div>
         </div>
       )}
