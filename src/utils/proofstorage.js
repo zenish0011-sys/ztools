@@ -2,7 +2,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 
 const SETTINGS_DOC = doc(db, 'settings', 'global')
-
+//global settings 
 const getGlobalSettings = async () => {
   try {
     const snap = await getDoc(SETTINGS_DOC)
